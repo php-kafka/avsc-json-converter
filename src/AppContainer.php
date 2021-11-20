@@ -11,7 +11,6 @@ use Pimple\Container;
 class AppContainer
 {
     /**
-     * @param string $env
      * @return Container
      */
     public static function init(): Container

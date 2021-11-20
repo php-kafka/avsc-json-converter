@@ -70,7 +70,12 @@ class ConvertAvscToJsonCommand extends Command
             }
 
             ++$count;
-            $avsc = file_get_contents($file->getRealPath());
+
+            /** @var string $filepath */
+            $filepath = $file->getRealPath();
+
+            /** @var string $avsc */
+            $avsc = file_get_contents($filepath);
             $json = $this->converter->convert($avsc, ['markNoDefaultAsRequired' => $noDefaultAsRequired]);
 
             if (false === file_exists($outputDirectory)) {
