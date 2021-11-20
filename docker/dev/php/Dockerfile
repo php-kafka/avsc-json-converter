@@ -8,7 +8,7 @@ RUN mkdir /phpIni
 COPY files/bin/ /usr/local/bin/
 COPY files/php/ /phpIni
 
-# SYS: Install required packages
+# Install required packages
 RUN apk --no-cache upgrade && \
     apk --no-cache add bash git sudo autoconf gcc g++ make
 
