@@ -10,6 +10,15 @@ code-style: pcov-disable
 	mkdir -p build/logs/phpcs
 	${PHPCS}
 
+update-dependencies:
+	composer update
+
+install-dependencies:
+	composer install
+
+install-dependencies-lowest:
+	composer install --prefer-lowest
+
 pcov-enable:
 	sudo php-ext-enable pcov
 
