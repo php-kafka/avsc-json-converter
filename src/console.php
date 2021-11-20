@@ -12,8 +12,12 @@ if (is_file(__DIR__ . '/../../../autoload.php') === true) {
 }
 
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
 $container = AppContainer::init();
+
+/** @var array<Command> $commands */
+$commands = $container['console.commands'];
 $console = new Application('Avsc-JSON Schema Converter');
-$console->addCommands($container['console.commands']);
+$console->addCommands($commands);
 $console->run();

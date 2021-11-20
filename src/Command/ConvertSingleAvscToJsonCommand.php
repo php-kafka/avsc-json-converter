@@ -54,6 +54,7 @@ class ConvertSingleAvscToJsonCommand extends Command
             return -1;
         }
 
+        /** @var string $avsc */
         $avsc = file_get_contents($avscSchema);
         $json = $this->converter->convert($avsc, ['markNoDefaultAsRequired' => $noDefaultAsRequired]);
 

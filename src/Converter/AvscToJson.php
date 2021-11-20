@@ -6,19 +6,33 @@ use PhpKafka\AvscJsonConverter\Avro\Avro;
 
 class AvscToJson implements ConverterInterface
 {
+    /** @var array<string,mixed> $options */
     private array $options;
 
+    /**
+     * @param string $avscSchema
+     * @param array<string,mixed> $options
+     * @return string
+     */
     public function convert(string $avscSchema, array $options): string
     {
         $this->options = $options;
-        $avscArray = json_decode($avscSchema, true);
+
+        /** @var mixed[] $avscArray */
+        $avscArray = json_decode($avscSchema, true, JSON_THROW_ON_ERROR);
         $jsonArray = $this->convertAvro($avscArray);
+
+        /** @var string $rawJson */
         $rawJson = json_encode($jsonArray);
         $json = $this->fixAvroTypes($rawJson);
 
         return $json;
     }
 
+    /**
+     * @param mixed[] $avscArray
+     * @return mixed[]
+     */
     private function convertAvro(array $avscArray): array
     {
         $jsonArray = [];
@@ -30,21 +44,28 @@ class AvscToJson implements ConverterInterface
             if ('type' === $key && 'array' === $value) {
                 $jsonArray[$key] = $value;
 
+                /** @var string|mixed[] $items */
+                $items = $avscArray['items'];
+
                 if (
-                    true === $this->isBasicType($avscArray['items'])
-                    || (true === is_array($avscArray['items']) && true === $this->isBasicTypeArray($avscArray['items']))
+                    true === $this->isBasicType($items)
+                    || (true === is_array($items) && true === $this->isBasicTypeArray($items))
                 ) {
-                    $jsonArray['items'] = $avscArray['items'];
-                } elseif (true === isset($avscArray['items']['type']) && 'record' === $avscArray['items']['type']) {
-                    $jsonArray['items'] = $this->convertAvro($avscArray['items']);
-                } else {
-                    $jsonArray['items'] = $this->getAnyOf($avscArray['items']);
+                    $jsonArray['items'] = $items;
+                } elseif (
+                    true === is_array($items)
+                    && true === isset($items['type'])
+                    && 'record' === $items['type']
+                ) {
+                    $jsonArray['items'] = $this->convertAvro($items);
+                } elseif (true === is_array($items)) {
+                    $jsonArray['items'] = $this->getAnyOf($items);
                 }
             }
-            if ('name' === $key) {
+            if ('name' === $key && true === is_string($value)) {
                 $jsonArray['title'] = $this->snakeToPascal($value);
             }
-            if ('fields' === $key) {
+            if ('fields' === $key && true === is_array($value)) {
                 $jsonArray['properties'] = $this->convertAvroFieldsToJsonFields($value);
                 $requiredFields = $this->getRequiredFields($value);
 
@@ -57,11 +78,16 @@ class AvscToJson implements ConverterInterface
         return $jsonArray;
     }
 
+    /**
+     * @param mixed[] $avroFields
+     * @return mixed[]
+     */
     private function convertAvroFieldsToJsonFields(array $avroFields): array
     {
         $fields = [];
 
         foreach ($avroFields as $field) {
+            /** @var string|mixed[] $fieldType */
             $fieldType = $field['type'];
 
             if (
@@ -80,13 +106,19 @@ class AvscToJson implements ConverterInterface
         return $fields;
     }
 
+    /**
+     * @param mixed[] $avroFields
+     * @return mixed[]
+     */
     private function getRequiredFields(array $avroFields): array
     {
         $requiredFields = [];
 
         foreach ($avroFields as $field) {
             if (
-                true === $this->options['markNoDefaultAsRequired'] && false === array_key_exists('default', $field)
+                true === $this->options['markNoDefaultAsRequired']
+                && true === is_array($field)
+                && false === array_key_exists('default', $field)
             ) {
                 $requiredFields[] = $field['name'];
             } elseif (false === $this->options['markNoDefaultAsRequired']) {
@@ -97,17 +129,28 @@ class AvscToJson implements ConverterInterface
         return $requiredFields;
     }
 
+    /**
+     * @param mixed[] $types
+     * @return mixed[]
+     */
     private function getAnyOf(array $types)
     {
         $anyOf = [];
 
         foreach ($types as $type) {
+            if (false === is_string($type) && false === is_array($type)) {
+                continue;
+            }
             $anyOf['anyOf'][] = $this->getAnyOfType($type);
         }
 
         return $anyOf;
     }
 
+    /**
+     * @param string|mixed[] $type
+     * @return mixed[]|string[]
+     */
     private function getAnyOfType($type)
     {
         if (true === is_string($type)) {
@@ -117,9 +160,16 @@ class AvscToJson implements ConverterInterface
         }
     }
 
+    /**
+     * @param mixed[] $fieldTypes
+     * @return bool
+     */
     private function isBasicTypeArray(array $fieldTypes): bool
     {
         foreach ($fieldTypes as $type) {
+            if (false === is_string($type) && false === is_array($type)) {
+                continue;
+            }
             if (false === $this->isBasicType($type)) {
                 return false;
             }
@@ -128,6 +178,10 @@ class AvscToJson implements ConverterInterface
         return true;
     }
 
+    /**
+     * @param string|mixed[] $type
+     * @return bool
+     */
     private function isBasicType($type)
     {
         if (false === is_string($type)) {
@@ -142,13 +196,14 @@ class AvscToJson implements ConverterInterface
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $input)));
     }
 
-    private function fixAvroTypes(string $rawJson)
+    private function fixAvroTypes(string $rawJson): string
     {
         $json = str_replace('int', 'integer', $rawJson);
         $json = str_replace('long', 'number', $json);
         $json = str_replace('float', 'number', $json);
         $json = str_replace('double', 'number', $json);
         $json = str_replace('bytes', 'string', $json);
+
         return $json;
     }
 }

@@ -11,9 +11,9 @@ use Pimple\ServiceProviderInterface;
 
 class ConverterServiceProvider implements ServiceProviderInterface
 {
-    public function register(Container $container)
+    public function register(Container $container): void
     {
-        $container[AvscToJson::class] = function () use ($container): ConverterInterface {
+        $container[AvscToJson::class] = function (): ConverterInterface {
             return new AvscToJson();
         };
     }
