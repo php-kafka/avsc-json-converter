@@ -35,7 +35,7 @@ class AvscToJson implements ConverterInterface
                     || (true === is_array($avscArray['items']) && true === $this->isBasicTypeArray($avscArray['items']))
                 ) {
                     $jsonArray['items'] = $avscArray['items'];
-                } else if (true === isset($avscArray['items']['type']) && 'record' === $avscArray['items']['type']) {
+                } elseif (true === isset($avscArray['items']['type']) && 'record' === $avscArray['items']['type']) {
                     $jsonArray['items'] = $this->convertAvro($avscArray['items']);
                 } else {
                     $jsonArray['items'] = $this->getAnyOf($avscArray['items']);
@@ -72,7 +72,7 @@ class AvscToJson implements ConverterInterface
                     'type' => $field['type'],
                     'description' => $field['doc']
                 ];
-            } else if (true === is_array($fieldType)) {
+            } elseif (true === is_array($fieldType)) {
                 $fields[$field['name']] = $this->getAnyOf($fieldType);
             }
         }
@@ -80,7 +80,8 @@ class AvscToJson implements ConverterInterface
         return $fields;
     }
 
-    private function getRequiredFields(array $avroFields) {
+    private function getRequiredFields(array $avroFields): array
+    {
         $requiredFields = [];
 
         foreach ($avroFields as $field) {
@@ -88,7 +89,7 @@ class AvscToJson implements ConverterInterface
                 true === $this->options['markNoDefaultAsRequired'] && false === array_key_exists('default', $field)
             ) {
                 $requiredFields[] = $field['name'];
-            } else if (false === $this->options['markNoDefaultAsRequired']) {
+            } elseif (false === $this->options['markNoDefaultAsRequired']) {
                 $requiredFields[] = $field['name'];
             }
         }
@@ -96,7 +97,8 @@ class AvscToJson implements ConverterInterface
         return $requiredFields;
     }
 
-    private function getAnyOf(array $types) {
+    private function getAnyOf(array $types)
+    {
         $anyOf = [];
 
         foreach ($types as $type) {
@@ -106,7 +108,8 @@ class AvscToJson implements ConverterInterface
         return $anyOf;
     }
 
-    private function getAnyOfType($type) {
+    private function getAnyOfType($type)
+    {
         if (true === is_string($type)) {
             return ['type' => $type];
         } else {
@@ -125,7 +128,8 @@ class AvscToJson implements ConverterInterface
         return true;
     }
 
-    private function isBasicType($type) {
+    private function isBasicType($type)
+    {
         if (false === is_string($type)) {
             return false;
         }
@@ -138,7 +142,8 @@ class AvscToJson implements ConverterInterface
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $input)));
     }
 
-    private function fixAvroTypes(string $rawJson) {
+    private function fixAvroTypes(string $rawJson)
+    {
         $json = str_replace('int', 'integer', $rawJson);
         $json = str_replace('long', 'number', $json);
         $json = str_replace('float', 'number', $json);

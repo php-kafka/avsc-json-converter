@@ -30,7 +30,12 @@ class ConvertAvscToJsonCommand extends Command
             ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Schema directory')
             ->addArgument('outputDirectory', InputArgument::REQUIRED, 'Output directory')
             ->addOption('convertOnlyValueSchema', null, InputOption::VALUE_NONE, 'Only convert value schema')
-            ->addOption('noDefaultAsRequired', null, InputOption::VALUE_NONE, 'Instead of all fields, only fields with no default are required')
+            ->addOption(
+                'noDefaultAsRequired',
+                null,
+                InputOption::VALUE_NONE,
+                'Instead of all fields, only fields with no default are required'
+            )
         ;
     }
 
