@@ -10,7 +10,7 @@ COPY files/php/ /phpIni
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
-    apk --no-cache add bash git sudo make
+    apk --no-cache add bash git sudo autoconf gcc g++ make
 
 RUN adduser -u $HOST_USER_ID -D -H $HOST_USER && \
     echo "ALL ALL=NOPASSWD: ALL" >> /etc/sudoers && \
