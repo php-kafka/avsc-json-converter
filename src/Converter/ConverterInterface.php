@@ -6,5 +6,5 @@ namespace PhpKafka\AvscJsonConverter\Converter;
 
 interface ConverterInterface
 {
-    public function convert (string $avscSchema, array $options): string;
+    public function convert(string $avscSchema, array $options): string;
 }
