@@ -1,0 +1,49 @@
+{
+    "name": "php-kafka/avsc-json-converter",
+    "description": "Library that converts Avsc to JSON schema",
+    "license": [
+        "BSD-3-Clause"
+    ],
+    "authors": [
+        {
+            "name": "php-kafka",
+            "homepage": "https://php-kafka.com"
+        },
+        {
+            "name": "Nick",
+            "email": "coding.nikazu@gmail.com",
+            "homepage": "https://github.com/nick-zh"
+        }
+    ],
+    "keywords": [
+        "avsc",
+        "json",
+        "schema",
+        "converter"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "ext-json": "*",
+        "symfony/console": "^5.3",
+        "pimple/pimple": "^3.5"
+    },
+    "bin": [
+        "bin/avsc-to-json"
+    ],
+    "autoload": {
+        "psr-4": {
+            "PhpKafka\\AvscJsonConverter\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/php-kafka/avsc-json-converter/issues"
+    }
+}
