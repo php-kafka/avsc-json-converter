@@ -1,6 +1,11 @@
 # Avsc Json Schema converter
 Converts an Avsc schema into a JSON schema
 
+## Installation
+```bash
+composer require php-kafka/avsc-json-converter
+```
+
 ## Usage
 Convert a folder with avsc files into json schema:
 ```bash
