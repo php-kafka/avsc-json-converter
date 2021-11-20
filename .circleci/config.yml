@@ -1,0 +1,21 @@
+version: 2.1
+
+orbs:
+  ci-caching: jobcloud/ci-caching@3.0
+  ci-php: jobcloud/ci-php@2.0
+
+workflows:
+  test-avsc-json-converter:
+    jobs:
+      - ci-caching/build-docker-images:
+          dockerComposeFile: "./docker/docker-compose.yml"
+      - ci-php/install-dependencies:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-caching/build-docker-images
+      - ci-php/code-style:
+          dockerComposeFile: "./docker/docker-compose.yml"
+          dependencyCheckSumFile: "./composer.json"
+          requires:
+            - ci-php/install-dependencies
