@@ -59,10 +59,10 @@ class ConvertSingleAvscToJsonCommand extends Command
         $json = $this->converter->convert($avsc, ['markNoDefaultAsRequired' => $noDefaultAsRequired]);
 
         if (false === file_exists($outputDirectory)) {
-            mkdir($outputDirectory);
+            mkdir($outputDirectory, 0755, true);
         }
 
-        $fname = $outputDirectory . DIRECTORY_SEPARATOR . $jsonSchema;
+        $fname = $jsonSchema;
         file_put_contents($fname, $json);
 
         $output->writeln('Successfully converted avsc schema');

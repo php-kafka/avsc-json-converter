@@ -79,7 +79,7 @@ class ConvertAvscToJsonCommand extends Command
             $json = $this->converter->convert($avsc, ['markNoDefaultAsRequired' => $noDefaultAsRequired]);
 
             if (false === file_exists($outputDirectory)) {
-                mkdir($outputDirectory);
+                mkdir($outputDirectory, 0755, true);
             }
 
             $fname = $outputDirectory . DIRECTORY_SEPARATOR . str_replace('.avsc', '.json', $file->getFilename());
