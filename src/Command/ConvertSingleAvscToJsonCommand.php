@@ -29,6 +29,7 @@ class ConvertSingleAvscToJsonCommand extends Command
             ->setDescription('Convert avsc schema to json schema')
             ->addArgument('avscSchema', InputArgument::REQUIRED, 'Avsc schema file path')
             ->addArgument('jsonSchema', InputArgument::REQUIRED, 'Json schema file path')
+            ->addArgument('title', InputArgument::OPTIONAL, 'Set a specific title for the json schema')
             ->addOption(
                 'noDefaultAsRequired',
                 null,
@@ -40,6 +41,9 @@ class ConvertSingleAvscToJsonCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): ?int
     {
+        /** @var string|null $title */
+        $title = $input->getArgument('title');
+
         /** @var string $avscSchema */
         $avscSchema = $input->getArgument('avscSchema');
 
@@ -57,6 +61,12 @@ class ConvertSingleAvscToJsonCommand extends Command
         /** @var string $avsc */
         $avsc = file_get_contents($avscSchema);
         $json = $this->converter->convert($avsc, ['markNoDefaultAsRequired' => $noDefaultAsRequired]);
+
+        if (null !== $title) {
+            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $data['title'] = $title;
+            $json = json_encode($data, JSON_THROW_ON_ERROR);
+        }
 
         if (false === file_exists($outputDirectory)) {
             mkdir($outputDirectory, 0755, true);
