@@ -198,11 +198,11 @@ class AvscToJson implements ConverterInterface
 
     private function fixAvroTypes(string $rawJson): string
     {
-        $json = str_replace('int', 'integer', $rawJson);
-        $json = str_replace('long', 'number', $json);
-        $json = str_replace('float', 'number', $json);
-        $json = str_replace('double', 'number', $json);
-        $json = str_replace('bytes', 'string', $json);
+        $json = str_replace('"int"', '"integer"', $rawJson);
+        $json = str_replace('"long"', '"number"', $json);
+        $json = str_replace('"float"', '"number"', $json);
+        $json = str_replace('"double"', '"number"', $json);
+        $json = str_replace('"bytes"', '"string"', $json);
 
         return $json;
     }
