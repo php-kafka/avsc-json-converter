@@ -47,11 +47,10 @@ class AvscToJson implements ConverterInterface
                 /** @var string|mixed[] $items */
                 $items = $avscArray['items'];
 
-                if (
-                    true === $this->isBasicType($items)
-                    || (true === is_array($items) && true === $this->isBasicTypeArray($items))
-                ) {
-                    $jsonArray['items'] = $items;
+                if (true === $this->isBasicType($items)) {
+                    $jsonArray['items'] = ['type' => $items];
+                } elseif (true === is_array($items) && true === $this->isBasicTypeArray($items)) {
+                    $jsonArray['items'] = $this->getXOf($items, 'oneOf');
                 } elseif (
                     true === is_array($items)
                     && true === isset($items['type'])
@@ -59,7 +58,7 @@ class AvscToJson implements ConverterInterface
                 ) {
                     $jsonArray['items'] = $this->convertAvro($items);
                 } elseif (true === is_array($items)) {
-                    $jsonArray['items'] = $this->getAnyOf($items);
+                    $jsonArray['items'] = $this->getXOf($items);
                 }
             }
             if ('name' === $key && true === is_string($value)) {
@@ -99,7 +98,7 @@ class AvscToJson implements ConverterInterface
                     'description' => $field['doc']
                 ];
             } elseif (true === is_array($fieldType)) {
-                $fields[$field['name']] = $this->getAnyOf($fieldType);
+                $fields[$field['name']] = $this->getXOf($fieldType);
             }
         }
 
@@ -133,18 +132,18 @@ class AvscToJson implements ConverterInterface
      * @param mixed[] $types
      * @return mixed[]
      */
-    private function getAnyOf(array $types)
+    private function getXOf(array $types, string $ofType = 'anyOf')
     {
-        $anyOf = [];
+        $xOf = [];
 
         foreach ($types as $type) {
             if (false === is_string($type) && false === is_array($type)) {
                 continue;
             }
-            $anyOf['anyOf'][] = $this->getAnyOfType($type);
+            $xOf[$ofType][] = $this->getAnyOfType($type);
         }
 
-        return $anyOf;
+        return $xOf;
     }
 
     /**
