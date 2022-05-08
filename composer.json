@@ -38,6 +38,9 @@
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "squizlabs/php_codesniffer": "^3.6"
     },
+    "allow-plugins": {
+        "infection/*": true
+    },
     "bin": [
         "bin/avsc-to-json"
     ],
