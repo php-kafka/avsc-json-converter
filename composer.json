@@ -22,7 +22,10 @@
         "converter"
     ],
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     },
     "require": {
         "php": "^7.4|^8.0",
