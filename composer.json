@@ -22,7 +22,10 @@
         "converter"
     ],
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     },
     "require": {
         "php": "^7.4|^8.0",
@@ -37,9 +40,6 @@
         "phpunit/phpunit": "^9.5",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "squizlabs/php_codesniffer": "^3.6"
-    },
-    "allow-plugins": {
-        "infection/*": true
     },
     "bin": [
         "bin/avsc-to-json"
